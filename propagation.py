@@ -34,7 +34,6 @@ def calc_phase_difference(signal1, signal2, f0, dt):
     '''better way?'''
     xcorr = correlate(signal1, signal2, mode='full', method='fft')
     am = np.argmax(xcorr)
-    print(f"{am=}")
     T = dt*am
     return np.remainder(2*np.pi*T*f0,2*np.pi)
 

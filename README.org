@@ -1,0 +1,9 @@
+#+TITLE: Radar Basics
+
+This is a place to build Doppler processing from the ground up without a guide. This is done to both increase enjoyment and add context for later learning.
+
+* Todos
+- [ ] Figure out how to incorporate complex (I/Q) into inter-pulse phase difference to double the phase delineation bandwidth.
+- [ ] Make a single range bin
+- [ ] do an FFT over the bin and place targets in bins
+- [ ] make pulse received bins more realistic

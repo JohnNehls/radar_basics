@@ -10,7 +10,12 @@ C = 3e8 # m/s
 
 def unambigous_speed(f0, c, PRF):
     '''Unambigeous speed for complex (I/Q) signal'''
-    return unambigous_distance(f0, c)*PRF
+    lamb = c/f0
+    return lamb*PRF/2
+
+def unambigous_range(f0, c, PRF):
+    '''Unambigeous range for complex (I/Q) signal'''
+    return c/(2*PRF)
 
 def basebandPulse(t, phi, complex):
     ''''''
@@ -37,7 +42,7 @@ def min_speed(PRF, Npulses, c, f0, phase_threshold):
 
 # simulation Parameters
 COMPLEX = True
-fmax = 100e9
+fmax = 1e9
 fsample = 2*fmax
 dt_sample = 1/fsample
 Tmax = 50e-9 # length of the pulse
@@ -51,7 +56,7 @@ f0 = 300e6
 phi = np.pi/3
 
 PRF = 1.34333e3 # Hz
-Npulses = 3
+Npulses = 9
 t_start = 0 # seconds
 pulse_starts = []
 
@@ -69,15 +74,16 @@ def targetDist_t(x0, v, t):
 # target
 x0 = 17.2452
 v = 671.665
-v = 17.1
+v = 660
+# v = 5.7
 target_locations = [targetDist_t(x0,v,t) for t in pulse_starts]
 
 return_signals = [propagation_phaseloss(target_locations[i], C, f0)*pulses[i] for i in range(Npulses)]
 
 import matplotlib.pyplot as pl
-fig, ax = pl.subplots(2,1)
-for sig in pulses:
-    ax[0].plot(t,np.real(sig))
+# fig, ax = pl.subplots(2,1)
+# for sig in pulses:
+#     ax[0].plot(t,np.real(sig))
 
 for sig in return_signals:
     ax[1].plot(t,np.real(sig))
@@ -94,10 +100,13 @@ est_return_phases = [calc_phase_difference(pulses[i], return_signals[i], f0, t[1
 
 print(f"{return_phases=}")
 print(f"{est_return_phases=}")
+pl.figure()
+pl.title("phases change per pulse")
+pl.plot(est_return_phases-est_return_phases[0])
 
 print("")
 print(f"ret diff{[(j-i)%(2*np.pi) for i, j in zip(return_phases[:-1], return_phases[1:])] }")
 print(f"est diff{[(j-i)%(2*np.pi) for i, j in zip(est_return_phases[:-1], est_return_phases[1:])] }")
 
 # I thought there would be a way to get the phase difference from first to last pulse to get the minium detectable speed, but that does not seem to be the case from above.
-#min_speed(PRF, Npulses, C, f0, 0.24)
+print(f"{min_speed(PRF, Npulses, C, f0, 0.24)=}")
